@@ -9,6 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
     <style>
+        #flipbook {
+    touch-action: none; /* Забранява системните жестове на телефона върху книгата */
+}
         /* Базови стилове и нулиране */
         body {
             margin: 0;
@@ -192,18 +195,21 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Инициализация на библиотеката за разлистване
             const pageFlip = new St.PageFlip(document.getElementById('flipbook'), {
-                width: 400, // Базова ширина (съобразена с мобилни телефони)
-                height: 600, // Базова височина
-                size: "stretch", // Разпъва се според екрана
-                minWidth: 300,
-                maxWidth: 600,
-                minHeight: 400,
-                maxHeight: 900,
-                maxShadowOpacity: 0.5, // Сила на сянката при разлистване
-                showCover: true, // Първата и последната страница действат като корици
-                mobileScrollSupport: false,
-                usePortrait: true // Форсира единична страница в портретен режим
-            });
+    width: 400, 
+    height: 600, 
+    size: "stretch", 
+    minWidth: 300,
+    maxWidth: 600,
+    minHeight: 400,
+    maxHeight: 900,
+    maxShadowOpacity: 0.2, // Намаляваме изчисляването на сенките, за да върви леко
+    showCover: true, 
+    mobileScrollSupport: false,
+    usePortrait: true,
+    flippingTime: 600, // Ускоряваме скоростта на страницата (по подразбиране е 1000)
+    swipeDistance: 50, // Увеличаваме съпротивлението: иска се по-категорично плъзгане
+    clickEventForward: true // Позволява прелистване и само с едно докосване в края на екрана
+});
 
             // Зареждане на страниците от HTML структурата
             pageFlip.loadFromHTML(document.querySelectorAll('.page'));
