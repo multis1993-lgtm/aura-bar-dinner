@@ -5,27 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Меню - Aura Bar & Dinner</title>
     
-    <!-- Зареждане на библиотеката за разлистване (PageFlip) -->
     <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
     <style>
-        #flipbook {
-    touch-action: none; /* Забранява системните жестове на телефона върху книгата */
-}
-        /* Базови стилове и нулиране */
         body {
             margin: 0;
             padding: 0;
-            background-color: #0d0d0d; /* Тъмен фон за целия екран */
+            background-color: #0d0d0d;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
+            touch-action: none; 
         }
 
-        /* Контейнер на книгата */
+        /* ------------------------- */
+        /* ЗАРЕЖДАЩ ЕКРАН (LOADER)   */
+        /* ------------------------- */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0d0d0d;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Огнено/златно колело */
+        .glow-ring {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top: 3px solid #f7a93b;
+            border-bottom: 3px solid #f7a93b;
+            box-shadow: 0 0 20px rgba(247, 169, 59, 0.6), inset 0 0 20px rgba(247, 169, 59, 0.6);
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Текст в зареждащия екран */
+        .brand-text {
+            text-align: center;
+            color: #f7a93b;
+            z-index: 10;
+            animation: pulseText 2s infinite alternate;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 38px;
+            letter-spacing: 6px;
+            text-shadow: 0 0 15px #f7a93b;
+            font-weight: bold;
+        }
+
+        .brand-text h2 {
+            margin: 0;
+            font-size: 14px;
+            letter-spacing: 4px;
+            font-weight: normal;
+            margin-top: 5px;
+        }
+
+        @keyframes pulseText {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* ------------------------- */
+        /* ФЕЙСБУК ЛИНК (ГОРЕ)       */
+        /* ------------------------- */
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .top-bar a {
+            color: #f7a93b;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: textGlow 1.2s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { opacity: 0.7; text-shadow: 0 0 5px #f7a93b; }
+            100% { opacity: 1; text-shadow: 0 0 15px #f7a93b, 0 0 25px #f7a93b; }
+        }
+
+        /* ------------------------- */
+        /* КНИГА И СТРАНИЦИ          */
+        /* ------------------------- */
         .container {
             width: 100%;
             height: 100%;
@@ -34,7 +130,6 @@
             align-items: center;
         }
 
-        /* Стил за всяка страница */
         .page {
             background-color: #1a1a1a;
             color: #fff;
@@ -44,23 +139,24 @@
             flex-direction: column;
         }
 
-        /* Снимките от менюто да запълват страницата */
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Можеш да смениш на 'contain', ако снимките се изрязват */
+            object-fit: cover;
             pointer-events: none;
         }
 
-        /* Персонализирани стилове за последните 2 страници (Контакти и Резервации) */
         .custom-page {
             padding: 30px 20px;
             box-sizing: border-box;
             background-image: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .custom-page h2 {
-            color: #f7a93b; /* Златисто/оранжево, съвпадащо с твоето меню */
+            color: #f7a93b;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -74,6 +170,7 @@
             line-height: 1.8;
             margin: 15px 0;
             color: #e0e0e0;
+            text-align: center;
         }
 
         .custom-page a {
@@ -82,46 +179,6 @@
             font-weight: bold;
         }
 
-        /* Форма за резервации */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #f7a93b;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 15px;
-            background-color: #f7a93b;
-            color: #111;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: background 0.3s ease;
-        }
-
-        .btn-submit:active {
-            background-color: #d18b2c;
-        }
-
-        /* Инструкция за потребителя */
         .swipe-instruction {
             position: absolute;
             bottom: 20px;
@@ -142,9 +199,26 @@
 </head>
 <body>
 
+    <!-- ЗАРЕЖДАЩ ЕКРАН -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="glow-ring"></div>
+            <div class="brand-text">
+                <h1>AURA</h1>
+                <h2>BAR & DINNER</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- ФЕЙСБУК ЛИНК НАЙ-ОТГОРЕ -->
+    <div class="top-bar">
+        <!-- Смени линка в href="..." с истинския адрес на фейсбук страницата -->
+        <a href="https://www.facebook.com/profile.php?id=61570644003870" target="_blank">Посетете нашата фейсбук страница</a>
+    </div>
+
     <div class="container">
         <div id="flipbook">
-            <!-- Страници 1 до 10 със снимките -->
+            <!-- Страници със снимки -->
             <div class="page"><img src="1.jpg" alt="Меню Страница 1"></div>
             <div class="page"><img src="2.jpg" alt="Меню Страница 2"></div>
             <div class="page"><img src="3.jpg" alt="Меню Страница 3"></div>
@@ -158,33 +232,13 @@
             <div class="page"><img src="11.jpg" alt="Меню Страница 11"></div>
             <div class="page"><img src="12.jpg" alt="Меню Страница 12"></div>
 
-            <!-- Страница 11: Контакти -->
+            <!-- Страница 11: Контакти (Резервациите са премахнати) -->
             <div class="page custom-page">
                 <h2>Контакти</h2>
-                <p>📍 <strong>Адрес:</strong><br> гр. Елхово, [Твоят Адрес Тук]</p>
-                <p>📞 <strong>Телефон:</strong><br> <a href="tel:+359888000000">0888 00 00 00</a></p>
+                <p>📍 <strong>Адрес:</strong><br> гр. Елхово, ул. Търговска 12</p>
+                <p>📞 <strong>Телефон:</strong><br> <a href="tel:+35987 786 6605">087 786 6605</a></p>
                 <p>📧 <strong>Имейл:</strong><br> <a href="mailto:info@aurabar.bg">info@aurabar.bg</a></p>
-                <p>🕒 <strong>Работно време:</strong><br> Понеделник - Неделя<br> 08:00 - 24:00 ч.</p>
-            </div>
-
-            <!-- Страница 12: Резервации -->
-            <div class="page custom-page">
-                <h2>Резервация</h2>
-                <form action="#" method="POST" onsubmit="alert('Заявката е изпратена успешно!'); return false;">
-                    <div class="form-group">
-                        <input type="text" name="name" placeholder="Вашето име" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" name="phone" placeholder="Телефонен номер" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="number" name="people" placeholder="Брой хора" min="1" max="20" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="datetime-local" name="date" required>
-                    </div>
-                    <button type="submit" class="btn-submit">Запази маса</button>
-                </form>
+                <p>🕒 <strong>Работно време:</strong><br> Вторник - Неделя<br> 09:00 - 24:00 ч.</p>
             </div>
         </div>
     </div>
@@ -193,23 +247,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Премахване на зареждащия екран след 2.5 секунди
+            setTimeout(function() {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 2500);
+
             // Инициализация на библиотеката за разлистване
             const pageFlip = new St.PageFlip(document.getElementById('flipbook'), {
-    width: 400, 
-    height: 600, 
-    size: "stretch", 
-    minWidth: 300,
-    maxWidth: 600,
-    minHeight: 400,
-    maxHeight: 900,
-    maxShadowOpacity: 0.2, // Намаляваме изчисляването на сенките, за да върви леко
-    showCover: true, 
-    mobileScrollSupport: false,
-    usePortrait: true,
-    flippingTime: 600, // Ускоряваме скоростта на страницата (по подразбиране е 1000)
-    swipeDistance: 50, // Увеличаваме съпротивлението: иска се по-категорично плъзгане
-    clickEventForward: true // Позволява прелистване и само с едно докосване в края на екрана
-});
+                width: 400, 
+                height: 600, 
+                size: "stretch", 
+                minWidth: 300,
+                maxWidth: 600,
+                minHeight: 400,
+                maxHeight: 900,
+                maxShadowOpacity: 0.2, // По-малко сенки за по-леко вървене
+                showCover: true, 
+                mobileScrollSupport: false,
+                usePortrait: true,
+                flippingTime: 600, // По-бързо прелистване
+                swipeDistance: 50, // По-малко чувствително
+                clickEventForward: true 
+            });
 
             // Зареждане на страниците от HTML структурата
             pageFlip.loadFromHTML(document.querySelectorAll('.page'));
